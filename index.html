@@ -12,7 +12,8 @@
         <h1> TO DO LIST</h1>
         <p>We help you to organise your task and maintain it.</p>
     <input type="text" id="input-box" placeholder="Add a Task">
-    <button onclick="addTask()">ADD</button>
+    <button onclick="createNewTask()">ADD</button>
+    <button onclick="logout()" id="logout">Logout</button>
     <select id="filter">
   <option value="all">All Tasks</option>
   <option value="completed">Completed</option>
@@ -20,12 +21,22 @@
 </select>
 
     </div>
-    <ul id="list-container">
-        <li class="checked">Task1</li>
-        <li>Task2</li>
-        <li>Task3</li> 
-    </ul> 
+    <ul id="list-container"></ul> 
     
     <script src="script.js"></script>
+    <script src="logout.js"></script>
+    <script> 
+        window.addEventListener("load", () => {
+  const userEmail = localStorage.getItem("user");
+
+  if (!userEmail) {
+    // User is not logged in → send them to login
+    window.location.href = "login.html";
+  } else {
+    console.log("Logged in as:", userEmail);
+  }
+});
+
+    </script>
 </body>
 </html>

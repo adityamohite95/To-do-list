@@ -1,13 +1,45 @@
 const inputBox = document.getElementById("input-box");
 const listContainer = document.getElementById("list-container");
-
+function userId() {
+  const user = JSON.parse(localStorage.getItem("user"))
+}
 // ✅ Load tasks from localStorage once
 function loadTasks() {
-  listContainer.innerHTML = ""; // clear existing list first
-  const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  savedTasks.forEach(task => {
-    createTaskElement(task.text, task.completed);
-  });
+  const token = localStorage.getItem("token");
+  // listContainer.innerHTML = ""; // clear existing list first
+  // const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  // savedTasks.forEach(task => {
+  //   renderTask(task.text, task.completed);
+  // });
+  fetch('https://taskraft.onrender.com/tasks', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+  })
+    .then(res => res.json())
+    .then((serverResponse => {
+      serverResponse.forEach(task => {
+        renderTask(task.title, task.status, task._id);
+      });
+    }));
+}
+
+function createNewTask() {
+  const inputText = document.getElementById("input-box").value;
+  const token = localStorage.getItem("token");
+  const user = localStorage.getItem("user");
+  const convertedUser = JSON.parse(user)
+  console.log(typeof convertedUser);
+  fetch('https://taskraft.onrender.com/task', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${token}` },
+    body: JSON.stringify({
+      "user": convertedUser._id,
+      "title": inputText,
+      "status": "pending"
+    })
+  })
+    .then(res => res.json())
+    .then((resssss) => console.log(resssss));
 }
 
 // ✅ Save all tasks to localStorage
@@ -19,13 +51,27 @@ function saveTasks() {
       completed: li.classList.contains("checked")
     });
   });
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  //  fetch('http://192.168.1.6:8000/add', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({
+  //     todo: 'Use DummyJSON in the project',
+  //     completed: false,
+  //     userId: 5,
+  //   })
+  // })
+  // .then(res => res.json())
+  // .then((serverResponse) => {
+
+  // });
 }
 
 // ✅ Create a task element (used for both load and add)
-function createTaskElement(text, completed = false) {
+function renderTask(text, status, id) {
   const li = document.createElement("li");
-  if (completed) li.classList.add("checked");
+  li.dataset.id = id;
+  if (status === "completed") li.classList.add("checked");
 
   // Task text
   const spanText = document.createElement("span");
@@ -55,7 +101,7 @@ function addTask() {
     alert("Write Something");
     return;
   }
-  createTaskElement(text);
+  renderTask(text);
   inputBox.value = "";
   saveTasks();
 }
@@ -66,8 +112,27 @@ listContainer.addEventListener("click", function (e) {
 
   // Delete Task
   if (target.classList.contains("close")) {
-    target.parentElement.remove();
-    saveTasks();
+    const li = target.parentElement;
+    const taskId = li.dataset.id;
+    const token = localStorage.getItem("token");
+    if(confirm("are you sure you want to delete this task?")){
+      fetch(`https://taskraft.onrender.com/task/${taskId}`,{
+        method: "DELETE",
+        headers:{
+          "Authorization":`Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data =>{
+        console.log("Task Deleted:",data);
+        li.remove();
+        saveTasks();
+      })
+      .catch(err =>{
+        console.error("Error deleting task:",err);
+        alert("Failed to delete a task, Please try again.");
+      });
+    }
   }
 
   // Edit Task
@@ -76,15 +141,63 @@ listContainer.addEventListener("click", function (e) {
     const textEl = li.querySelector(".task-text");
     const oldText = textEl.textContent.trim();
     const newText = prompt("Edit your Task:", oldText);
+
+    const token = localStorage.getItem("token");
+    const user =JSON.parse(localStorage.getItem("user"));
+    const taskId = li.dataset.id;
+    const status = li.classList.contains("checked") ? "completed" : "pending";
     if (newText !== null && newText.trim() !== "") {
-      textEl.textContent = newText;
-      saveTasks();
+      fetch(`https://taskraft.onrender.com/task/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+           title: newText,
+           status: status,
+           user: user._id
+           })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("Updated:", data);
+          textEl.textContent = newText;
+          saveTasks();
+        })
+        .catch(err => console.error("Error updating task:", err));
     }
   }
 
+
   // Mark Completed
   else if (target.classList.contains("task-text")) {
-    target.parentElement.classList.toggle("checked");
+    const li= target.parentElement;
+    li.classList.toggle("checked");
+
+    const token=localStorage.getItem("token");
+    const taskId= li.dataset.id;
+    const user =JSON.parse(localStorage.getItem("user"));
+    
+    const newStatus= li.classList.contains("checked")? "completed" : "pending";
+    const title = li.querySelector(".task-text").textContent.trim();
+
+    fetch(`https://taskraft.onrender.com/task/${taskId}`,{
+      method : "PUT",
+      headers : {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+         status: newStatus,
+         user : user._id,
+         title: title
+        })
+    })
+    .then(res => res.json())
+    .then(data=>console.log("Status Updated:", data))
+    .catch(err =>console.error("Error updating status:", err));
+
     saveTasks();
   }
 });
