@@ -1,9 +1,9 @@
 .my-task{
     text-align: center;
     padding: 10px  10px;
-    background-image: url(image/background.jpg);
     background-size: 100%;
     background-repeat: no-repeat;
+    
 }
 .my-task image{
     display: inline;
@@ -11,9 +11,9 @@
 .my-task button{
     padding: 10 px 12 px;
     background-origin: padding-box;
-    background-color: salmon;
+    background-color: rgba(250, 180, 114, 0.71);
     border-radius: 5px;
-    width: 50px;
+    width: 70px;
     height: 30px;
     cursor: pointer;
     
@@ -40,6 +40,7 @@
 ul {
   margin: 0;
   padding: 0;
+ 
 }
 
 /* Style the list items */
@@ -47,10 +48,13 @@ ul li {
   cursor: pointer;
   position: relative;
   padding: 12px 8px 12px 40px;
-  background: #eee;
-  margin-left: 2%;
+  background:beige;
+  margin-left: 5%;
   font-size: 18px;
   transition: 0.2s;
+  border-radius: 20px;
+  width: 80%;
+  margin-left: 10%;
 
   /* make the list items unselectable */
   -webkit-user-select: none;
@@ -128,5 +132,5 @@ ul li.checked::before {
   background-color: #f0f0f0;
 }
 body{
-  background-color: peachpuff;
+  background-color:gray;
 }
