@@ -23,7 +23,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      email: email,
+      email: email, 
       password: password
     })
   })

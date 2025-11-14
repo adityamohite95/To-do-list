@@ -127,3 +127,11 @@ button:hover {
     padding: 25px 18px;
   }
 }
+.container a {
+  color: #333;
+  text-decoration: none;
+}
+
+.container a:hover {
+  color: salmon;
+}
