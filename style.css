@@ -116,7 +116,6 @@ ul li:hover {
 ul li.checked {
   background: rgba(155, 229, 155, 0.3);
   color: #05310c;
-  text-decoration: line-through;
   font-weight: 600;
 }
 /* Task list container */
@@ -135,7 +134,6 @@ ul li {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   transition: 0.3s;
 }
-
 /* Hover effect */
 ul li:hover {
   background: rgba(255, 255, 255, 0.2);
