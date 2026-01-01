@@ -187,11 +187,16 @@ ul li.checked .task-text {
   outline: none;
   transition: 0.3s;
   backdrop-filter: blur(8px);
-  appearance: none; /* Remove default browser style */
+  appearance: none;
+  margin-top: 10px;
 }
 
 /* Dropdown hover/focus */
-#filter:hover, 
+#filter:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  filter: brightness(1.1);
+} 
 #filter:focus {
   background: rgba(255, 255, 255, 0.25);
   border-color: #9be59b;
